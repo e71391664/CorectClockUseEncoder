@@ -1,0 +1,18 @@
+# Команди для збірки та завантаження Arduino проекту CorectRTC
+
+## Компіляція
+arduino-cli compile --fqbn arduino:avr:nano:cpu=atmega328old .
+
+## Завантаження (upload)
+arduino-cli upload -p COM4 --fqbn arduino:avr:nano:cpu=atmega328old . -v
+
+## Перевірка підключених плат
+arduino-cli board list
+
+## Детальна інформація про плати
+arduino-cli board listall arduino:avr:nano -v
+
+# Примітки:
+# - Замініть COM4 на ваш порт, якщо потрібно
+# - cpu=atmega328old для старого бутлоадера
+# - cpu=atmega328 для нового бутлоадера 

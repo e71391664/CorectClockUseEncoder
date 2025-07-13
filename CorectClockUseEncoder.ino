@@ -15,7 +15,19 @@ extern GyverOLED<SSD1306_128x64, OLED_BUFFER> oled;
 RtcManager rtcManager;
 ReleManager releManager;
 DisplayGyver displayManager(rtcManager);
-EncoderManager encoderManager (displayManager, releManager);  
+EncoderManager encoderManager (displayManager, releManager, rtcManager);  
+
+//Відображення на дисплеї, реакція на уставку через енкодер та обробка реле
+void normalWorkStage(){
+  if (encoderManager.inEditMode()) {
+    displayManager.showOffset(encoderManager.getOffset());
+  } else if (releManager.isBusy()) {
+    displayManager.showStartProcessing();
+  } else {
+      displayManager.showTimeAndTemperature();
+      releManager.blinkOnNormalMode(rtcManager.now());
+  }
+}
 
 void setup() {
   // put your setup code here, to run once:
@@ -34,46 +46,28 @@ void setup() {
 void loop() {
   encoderManager.update();
   releManager.update();
-    
-  ///Обробка натискання кнопки енкодера
-  if (encoderManager.buttonPressed()) {
-      if (!encoderManager.inEditMode()) {
-          encoderManager.enterEditMode();
-      } else {
-          rtcManager.applyOffset(encoderManager.getOffset());
-          encoderManager.exitEditMode();
+
+   // --- Відображення тільки якщо дисплей увімкнений ---
+  if (displayManager.getDisplayOn()) {
+    if (displayManager.isEditing()) {
+       displayManager.updateEdit();
+     } else {
+      // displayManager.showTimeAndTemperature();
+      encoderManager.encoderCheck();
+      normalWorkStage();
+
+      if (rtcManager.readConfirm()) { // BTN_CONN
+      displayManager.startEdit();
+      displayManager.wakeDisplay();
       }
-  }
-
-  ///Відображення на дисплеї та обробка реле
-  if (encoderManager.inEditMode()) {
-      displayManager.showOffset(encoderManager.getOffset());
-  } else if (releManager.isBusy()) {
-    displayManager.showStartProcessing();
+   }
   } else {
-      displayManager.showTimeAndTemperature();
-      releManager.blinkOnNormalMode(rtcManager.now());
+     // Якщо дисплей вимкнений, перевіряємо кнопки для пробудження
+     if (rtcManager.readConfirm() || rtcManager.readBack()) {
+       displayManager.wakeDisplay();
+     }
+     displayManager.autoPowerOff();
   }
 
-
-  // // // --- Відображення тільки якщо дисплей увімкнений ---
-  //  if (displayManager.getDisplayOn()) {
-  //    if (displayManager.isEditing()) {
-  //       displayManager.updateEdit();
-  //     } else {
-  //       displayManager.showTimeAndTemperature();
-       
-  //       if (rtcManager.readConfirm()) { // BTN_CONN
-  //       displayManager.startEdit();
-  //       displayManager.wakeDisplay();
-  //     }
-  //   }
-  // } else {
-  //    // Якщо дисплей вимкнений, перевіряємо кнопки для пробудження
-  //    if (rtcManager.readConfirm() || rtcManager.readBack()) {
-  //      displayManager.wakeDisplay();
-  //    }
-  //    //displayManager.autoPowerOff();
-  // }
-  delay(100);
+  delay(50);
 }

@@ -8,6 +8,7 @@
 // Припустимо, що DisplayGyver і ReleManager вже є класами.
 #include "DisplayGyver.h" // Потрібен для showOffset, showStartProcessing
 #include "ReleManager.h"    // Потрібен для blinkOffsetFeedback
+#include "RtcManager.h"    // Потрібен для rtcMgr.applyOffset(_offset);
 
 class EncoderManager {
 private:
@@ -28,16 +29,20 @@ private:
     // Посилання на об'єкти дисплея та реле для взаємодії
     DisplayGyver& _displayManager;
     ReleManager& _releManager;
+    RtcManager& _rtcManager;
 
 public:
     // Конструктор: приймає піни енкодера та посилання на об'єкти DisplayGyver і ReleManager
-    EncoderManager(DisplayGyver& displayMgr, ReleManager& releMgr);
+    EncoderManager(DisplayGyver& displayMgr, ReleManager& releMgr, RtcManager& rtcMgr);
 
     // Ініціалізує енкодер.
     void init();
 
     // Оновлює стан енкодера (зчитування обертання).
     void update();
+
+    // Перевірка/уставка стану енкодера та його налаштуваня
+    void encoderCheck();
 
     // Перевіряє натискання кнопки енкодера (з антидребезгом).
     bool buttonPressed();

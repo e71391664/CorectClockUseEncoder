@@ -1,14 +1,15 @@
 #include "EncoderManager.h" // Включаємо заголовок нашого класу
 
 // Реалізація конструктора
-EncoderManager::EncoderManager(DisplayGyver& displayMgr, ReleManager& releMgr)
+EncoderManager::EncoderManager(DisplayGyver& displayMgr, ReleManager& releMgr, RtcManager& rtcMgr)
     : _myEnc(DT, CLK), // Ініціалізуємо об'єкт RotaryEncoder
       _lastPos(0),
       _lastDebounce(0),
       _offset(0),
       _inEdit(false),
       _displayManager(displayMgr), // Ініціалізуємо посилання на DisplayGyver
-      _releManager(releMgr)      // Ініціалізуємо посилання на ReleManager
+      _releManager(releMgr),      // Ініціалізуємо посилання на ReleManager
+      _rtcManager(rtcMgr)      // Ініціалізуємо посилання на ReleManager
 {
     // Тіло конструктора, якщо потрібна додаткова логіка ініціалізації
 }
@@ -18,6 +19,18 @@ void EncoderManager::init() {
     pinMode(SW, INPUT_PULLUP); // Кнопка енкодера з внутрішнім підтягуючим резистором
     _lastPos = _myEnc.read(); // Зчитуємо початкову позицію
     _lastDebounce = millis();
+}
+
+// Обробка натискання кнопки енкодера
+void EncoderManager::encoderCheck(){
+    if (buttonPressed()) {
+      if (!inEditMode()) {
+        enterEditMode();
+      } else {
+        _rtcManager.applyOffset(_offset);
+          exitEditMode();
+      }
+    }
 }
 
 // Перевіряє натискання кнопки енкодера (з антидребезгом).

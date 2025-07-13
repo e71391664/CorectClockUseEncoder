@@ -27,6 +27,7 @@ private:
         EDIT_MINUTE, ///< Редагування хвилин
         EDIT_SECOND ///< Редагування секунд
     };
+    
     EditState editState = NORMAL; ///< Поточний стан редагування
     unsigned long lastBlink = 0; ///< Час останнього перемикання блимання
     bool blink = false; ///< Стан блимання

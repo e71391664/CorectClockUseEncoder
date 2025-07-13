@@ -35,9 +35,7 @@ bool RtcManager::init() {
 }
 
 // Отримує поточний час від RTC.
-DateTime RtcManager::now() {
-    return rtc.now();
-}
+DateTime RtcManager::now() { return rtc.now(); }
 
 // Отримує температуру від RTC.
 float RtcManager::getTemperature() { return rtc.getTemperature(); }
@@ -75,6 +73,3 @@ bool RtcManager::readConfirm() {
     confirmState = (digitalRead(BTN_CONF) == LOW);
     return confirmState;
 }
-
-// --- Методи для корекції часу ---
-// (Видалено: startEdit, updateEdit, updateTimeBlinkView, setDisplayManager, cancelEdit, confirmEdit, isEditing)

@@ -22,7 +22,11 @@ public:
     // Updates the LED blinking state on set state Encoder.
     void blinkOnEncoderUpdate();
 
+    // Вмикає/вимикає реле в робочому режимі
     void blinkOnNormalMode(DateTime minute);
+
+    // Вимикачь реле в залежності від парності хвилини
+    void ReleOnOff(bool isOdd);
 
     // Returns true if the LED blinking process is active.
     bool isBusy();
@@ -41,7 +45,10 @@ private:
     static const int EVEN = 6;             // Pin for the second LED
  
     // Змінна для відстеження останньої хвилини блимання
-    DateTime _lastBlinkedMinute;
+   // DateTime _lastBlinkedMinute;
+    unsigned long normalModeBlinkStart = 0;//час початку блимання в звичайному режимі
+    DateTime lastBlinkedDateTime = -1;// Змінна для відстеження останньої хвилини блимання
+    bool isBlinkingActive = false; // Нова змінна для відстеження активності блимання
   
 };
 

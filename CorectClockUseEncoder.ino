@@ -35,27 +35,26 @@ void loop() {
   encoderManager.update();
   releManager.update();
     
-  // ///Обробка натискання кнопки енкодера
-  // if (encoderManager.buttonPressed()) {
-  //     if (!encoderManager.inEditMode()) {
-  //         encoderManager.enterEditMode();
-  //     } else {
-  //         rtcManager.applyOffset(encoderManager.getOffset());
-  //         encoderManager.exitEditMode();
-  //     }
-  // }
+  ///Обробка натискання кнопки енкодера
+  if (encoderManager.buttonPressed()) {
+      if (!encoderManager.inEditMode()) {
+          encoderManager.enterEditMode();
+      } else {
+          rtcManager.applyOffset(encoderManager.getOffset());
+          encoderManager.exitEditMode();
+      }
+  }
 
-  // ///Відображення на дисплеї та обробка реле
-  // if (encoderManager.inEditMode()) {
-  //     displayManager.showOffset(encoderManager.getOffset());
-  // } else if (releManager.isBusy()) {
-  //   displayManager.showStartProcessing();
-  // } else {
-  //     displayManager.showTimeAndTemperature();
-  //     releManager.blinkOnNormalMode(rtcManager.now());
-  // }
+  ///Відображення на дисплеї та обробка реле
+  if (encoderManager.inEditMode()) {
+      displayManager.showOffset(encoderManager.getOffset());
+  } else if (releManager.isBusy()) {
+    displayManager.showStartProcessing();
+  } else {
+      displayManager.showTimeAndTemperature();
+      releManager.blinkOnNormalMode(rtcManager.now());
+  }
 
-  releManager.blinkOnNormalMode(rtcManager.now());
 
   // // // --- Відображення тільки якщо дисплей увімкнений ---
   //  if (displayManager.getDisplayOn()) {

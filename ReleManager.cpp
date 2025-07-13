@@ -42,6 +42,7 @@ void ReleManager::update() {
     blinkOnEncoderUpdate();
 }
 
+//Blink after encoder state offset
 void ReleManager::blinkOnEncoderUpdate(){
     unsigned long currentMillis = millis();
 

@@ -55,7 +55,7 @@ void loop() {
      } else {
       normalWorkStage();
 
-      if (rtcManager.readC onfirm()) { // BTN_CONN
+      if (rtcManager.readConfirm()) { // BTN_CONN
       displayManager.startEdit();
       displayManager.wakeDisplay();
       }

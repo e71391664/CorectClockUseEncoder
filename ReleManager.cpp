@@ -42,7 +42,7 @@ void ReleManager::update() {
     blinkOnEncoderUpdate();
 }
 
-void  ReleManager::blinkOnEncoderUpdate(){
+void ReleManager::blinkOnEncoderUpdate(){
     unsigned long currentMillis = millis();
 
     if (!_isBlinkingActive) return;
@@ -77,7 +77,7 @@ void  ReleManager::blinkOnEncoderUpdate(){
 }
 
 // Функція блимання в звичайному режимі
-void blinkOnNormalMode(DateTime currentDateTime) {
+void ReleManager::blinkOnNormalMode(DateTime currentDateTime) {
   unsigned long currentMillis = millis();
 
   // Основна умова для запуску блимання:
@@ -109,7 +109,7 @@ void blinkOnNormalMode(DateTime currentDateTime) {
 }
 
 //Влк\Викл реле === чет\нечет
-void ReleOnOff(bool isOdd){
+void ReleManager::ReleOnOff(bool isOdd){
     //не парне значення(1..3..5..7)
     if (isOdd) {
  //     Serial.println("🔴 (Нечетный)");

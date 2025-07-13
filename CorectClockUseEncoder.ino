@@ -46,27 +46,27 @@ void setup() {
 void loop() {
   encoderManager.update();
   releManager.update();
+  encoderManager.encoderCheck(); // Переміщено сюди, щоб завжди перевіряти енкодер
 
    // --- Відображення тільки якщо дисплей увімкнений ---
   if (displayManager.getDisplayOn()) {
     if (displayManager.isEditing()) {
        displayManager.updateEdit();
      } else {
-      // displayManager.showTimeAndTemperature();
-      encoderManager.encoderCheck();
       normalWorkStage();
 
-      if (rtcManager.readConfirm()) { // BTN_CONN
+      if (rtcManager.readC onfirm()) { // BTN_CONN
       displayManager.startEdit();
       displayManager.wakeDisplay();
       }
    }
+   displayManager.autoPowerOff(); // Переміщено сюди, щоб вимикати екран, коли він увімкнений
   } else {
      // Якщо дисплей вимкнений, перевіряємо кнопки для пробудження
-     if (rtcManager.readConfirm() || rtcManager.readBack()) {
-       displayManager.wakeDisplay();
+     if (rtcManager.readConfirm() 
+        || rtcManager.readBack()) {      
+        displayManager.wakeDisplay();
      }
-     displayManager.autoPowerOff();
   }
 
   delay(50);

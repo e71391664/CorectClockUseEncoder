@@ -14,7 +14,7 @@ private:
     static const uint8_t DS_ADDRESS = 0x68; ///< I2C адреса для більшості RTC (DS1307, DS3231)
     static const uint8_t BTN_BACK = 10; ///< D10
     static const uint8_t BTN_CONF = 11; ///< D11
-    bool button1State = false; ///< Стан кнопки BTN_BACK
+    bool backState = false; ///< Стан кнопки BTN_BACK
     bool confirmState = false; ///< Стан кнопки BTN_CONF
 public:
     /// Конструктор

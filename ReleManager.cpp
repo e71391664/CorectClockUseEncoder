@@ -8,25 +8,21 @@ ReleManager::ReleManager()
       _totalBlinksToPerform(0),
       _currentBlinkStep(0),
       _blinkStartMillis(0),
-      _normalModeBlinkStart(0)
-      {
-    // Member initializer list is used to initialize private members.
-    //_lastBlinkedMinute = -1; // Ініціалізуємо окремо
-}
+      _normalModeBlinkStart(0) {}
 
 // Initializes the LED indicators.
 void ReleManager::init() {
     pinMode(ODD, OUTPUT);
     pinMode(EVEN, OUTPUT);
-    digitalWrite(ODD, LOW);
-    digitalWrite(EVEN, LOW);
+    digitalWrite(ODD, OFF);
+    digitalWrite(EVEN, OFF);
 }
 
 // Starts the LED blinking process for offset feedback.
 void ReleManager::blinkOffsetFeedback(int offset) {
     if (offset <= 0) {
-        digitalWrite(ODD, LOW);
-        digitalWrite(EVEN, LOW);
+        digitalWrite(ODD, OFF);
+        digitalWrite(EVEN, OFF);
         _isBlinkingActive = false;
         return;
     }
@@ -55,18 +51,12 @@ void ReleManager::blinkOnEncoderUpdate(){
   if (_currentBlinkStep % 2 == 0) {
         bool isOdd = ((_currentBlinkStep / 2) % 2 == 0); // Determine if it's a red or green phase
 
-        if (isOdd) {
-            digitalWrite(ODD, HIGH); // Red LED (assuming led1Pin is for red)
-            digitalWrite(EVEN, LOW);
-        } else {
-            digitalWrite(ODD, LOW);
-            digitalWrite(EVEN, HIGH); // Green LED (assuming led2Pin is for green)
-        }
+        ReleOnOff(isOdd); // Вмикаємо відповідний світлодіод
     }
     // Odd steps: Both LEDs are OFF (pause between blinks)
     else {
-        digitalWrite(ODD, LOW);
-        digitalWrite(EVEN, LOW);
+        digitalWrite(ODD, OFF);
+        digitalWrite(EVEN, OFF);
 
         // Check if all blinks have been completed after the off phase
         if ((_currentBlinkStep + 1) / 2 >= _totalBlinksToPerform) {
@@ -94,7 +84,7 @@ void ReleManager::blinkOnNormalMode(DateTime currentDateTime) {
     lastBlinkedDateTime = currentDateTime; // Оновлюємо повний DateTime останнього успішного блимання
 
     // Визначаємо, яка хвилина (парна/непарна)
-    bool isOdd = !(currentDateTime.minute() % 2 == 0); // Чи це непарна хвилина?
+    bool isOdd = !(currentDateTime.minute() % 2 == 0); // протилежна парній хвилина?
     ReleOnOff(isOdd); // Вмикаємо відповідний світлодіод
     isBlinkingActive = true; // Встановлюємо, що блимання активне
   }
@@ -103,8 +93,8 @@ void ReleManager::blinkOnNormalMode(DateTime currentDateTime) {
   // Перевіряємо, чи минуло BLINK_PHASE_DURATION (2 секунди) з моменту увімкнення
   // І чи блимання дійсно було активним
   if (isBlinkingActive && (currentMillis - normalModeBlinkStart >= BLINK_PHASE_DURATION)) {
-    digitalWrite(ODD, LOW); // Вимикаємо непарний світлодіод
-    digitalWrite(EVEN, LOW); // Вимикаємо парний світлодіод
+    digitalWrite(ODD, OFF); // Вимикаємо непарний світлодіод
+    digitalWrite(EVEN, OFF); // Вимикаємо парний світлодіод
     isBlinkingActive = false; // Скидаємо прапорець, оскільки блимання завершено
   }
 }

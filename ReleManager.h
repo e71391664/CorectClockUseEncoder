@@ -43,6 +43,13 @@ private:
 
     static const int ODD = 5;             // Pin for the first LED
     static const int EVEN = 6;             // Pin for the second LED
+
+    ///On|Off rele worked always as HIGN_LEVEL triger(+5v)
+    //static const int ON = LOW;
+    //static const int OFF = HIGH;
+    //Led used 0(groud)
+    static const int ON = HIGH;
+    static const int OFF = LOW;
  
     // Змінна для відстеження останньої хвилини блимання
    // DateTime _lastBlinkedMinute;

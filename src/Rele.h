@@ -1,5 +1,5 @@
-#ifndef RELE_MANAGER_H
-#define RELE_MANAGER_H
+#ifndef RELE_H
+#define RELE_H
 
 #include <Arduino.h> // Include Arduino core for pinMode, digitalWrite, millis, etc.
 #include <RTClib.h> // Для DateTime

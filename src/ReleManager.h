@@ -41,8 +41,8 @@ private:
     // Constant for the duration of each blink phase (e.g., 2000ms for on/off)
     static const unsigned int BLINK_PHASE_DURATION = 2000;// Тривалість горіння LED (2 секунди)
 
-    static const int ODD = 5;             // Pin for the first LED
-    static const int EVEN = 6;             // Pin for the second LED
+    static const int ODD = 12;             // Pin for the first LED
+    static const int EVEN = 11;             // Pin for the second LED
 
     ///On|Off rele worked always as HIGN_LEVEL triger(+5v)
     //static const int ON = LOW;

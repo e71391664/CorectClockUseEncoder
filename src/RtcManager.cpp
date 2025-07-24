@@ -65,7 +65,7 @@ void RtcManager::printTimeOncePerSecond() {
 }
 
 bool RtcManager::readBack() {
-    backStateState = (digitalRead(BTN_BACK) == LOW); // true якщо натиснуто
+    backState = (digitalRead(BTN_BACK) == LOW); // true якщо натиснуто
     return backState;
 }
 

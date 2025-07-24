@@ -1,4 +1,4 @@
-#include "Rele.h"
+#include "ReleManager.h"
 #include <RTClib.h> // Потрібно для DateTime now;
 // No need to include "globals.h" here anymore, as pins are passed to the constructor.
 

@@ -1,4 +1,4 @@
-#include "RtcManager.h" // Включаємо заголовок нашого класу
+#include "RTC.h" // Включаємо заголовок нашого класу
 #include "DisplayGyver.h" // Додаємо для використання DisplayGyver
 
 // Реалізація конструктора

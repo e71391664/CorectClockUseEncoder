@@ -1,5 +1,5 @@
-#ifndef RTC_MANAGER_H
-#define RTC_MANAGER_H
+#ifndef RTC_H
+#define RTC_H
 
 #include <Arduino.h> // Потрібен для базових функцій Arduino, таких як Serial, millis()
 #include <RTClib.h>  // Для класу RTC_DS3231, DateTime, TimeSpan
@@ -39,4 +39,4 @@ public:
     bool readConfirm();
 };
 
-#endif // RTC_MANAGER_H
+#endif // RTC__H

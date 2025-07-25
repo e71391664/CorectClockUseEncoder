@@ -45,7 +45,7 @@ void setup() {
 
 void loop() {
   encoderManager.update();
-  releManager.update();
+  releManager.blinkOnEncoderUpdate();
   encoderManager.encoderCheck(); // Переміщено сюди, щоб завжди перевіряти енкодер
 
    // --- Відображення тільки якщо дисплей увімкнений ---
@@ -59,8 +59,8 @@ void loop() {
       displayManager.startEdit();
       displayManager.wakeDisplay();
       }
-   }
-   displayManager.autoPowerOff(); // Переміщено сюди, щоб вимикати екран, коли він увімкнений
+      displayManager.autoPowerOff(); // Переміщено сюди, щоб вимикати екран, коли він увімкнений
+    }
   } else {
      // Якщо дисплей вимкнений, перевіряємо кнопки для пробудження
      if (rtcManager.readConfirm() 

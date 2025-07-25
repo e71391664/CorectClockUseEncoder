@@ -33,11 +33,6 @@ void ReleManager::blinkOffsetFeedback(int offset) {
     _blinkStartMillis = millis();
 }
 
-// Updates the LED blinking state (call this in loop()).
-void ReleManager::update() {
-    blinkOnEncoderUpdate();
-}
-
 //Blink after encoder state offset
 void ReleManager::blinkOnEncoderUpdate(){
     unsigned long currentMillis = millis();
@@ -104,11 +99,9 @@ void ReleManager::ReleOnOff(bool isOdd){
     //не парне значення(1..3..5..7)
     if (isOdd) {
  //     Serial.println("🔴 (Нечетный)");
-      digitalWrite(EVEN, LOW);
       digitalWrite(ODD, HIGH);
     } else {
    //   Serial.println("🟢 (Четный)");
-      digitalWrite(ODD, LOW);
       digitalWrite(EVEN, HIGH);
     }
 }

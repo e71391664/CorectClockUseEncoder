@@ -21,7 +21,7 @@ const uint8_t bitmap_32x32[] PROGMEM = {
 void DisplayGyver::init() {
     oled.init();
     //oled.setPower(true);
-    oled.setContrast(230);
+    oled.setContrast(10); // Встановлюємо контраст
     oled.clear();
     lastUserActionMillis = millis();
 }
@@ -286,7 +286,7 @@ void DisplayGyver::updateEdit() {
             editState = NORMAL;
             lastEditActionMillis = millis();
         }
-        if (digitalRead(11) == LOW) { // BTN_CONF
+        if (rtcManager.readConfirm()) { 
             if (pressStart == 0) pressStart = millis();
             if (millis() - pressStart > 1000) {
                 editState = nextState;
@@ -323,9 +323,8 @@ void DisplayGyver::cancelEdit() {
     editState = NORMAL; 
 }
 
-/// Підтверджує редагування часу
+// Зберігаємо новий час у RTC
 void DisplayGyver::confirmEdit(const DateTime& time) {
-    // Зберігаємо новий час у RTC
     DateTime newTime(time.year(), time.month(), time.day(), editHour, editMinute, editSecond);
     rtcManager.setTime(newTime);
     editState = NORMAL;

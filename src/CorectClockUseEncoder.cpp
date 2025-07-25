@@ -29,6 +29,28 @@ void normalWorkStage(){
   }
 }
 
+//Обробка подій тільки якщо дисплей увімкнений (3) ---
+void displayWork(){
+
+  if (displayManager.getDisplayOn()) {
+    if (displayManager.isEditing()) {
+       displayManager.updateEdit();
+     } else {
+      if (rtcManager.readConfirm()) { // BTN_CONN
+      displayManager.startEdit();
+      displayManager.wakeDisplay();
+      }
+      displayManager.autoPowerOff(); // Переміщено сюди, щоб вимикати екран, коли він увімкнений
+    }
+  } else {
+     // Якщо дисплей вимкнений, перевіряємо кнопки для пробудження
+     if (rtcManager.readConfirm() 
+        || rtcManager.readBack()) {      
+        displayManager.wakeDisplay();
+     }
+  }
+}
+
 void setup() {
   // put your setup code here, to run once:
   Serial.begin(9600); // Ініціалізація Serial-порту для виведення
@@ -48,26 +70,9 @@ void loop() {
   releManager.blinkOnEncoderUpdate();
   encoderManager.encoderCheck(); // Переміщено сюди, щоб завжди перевіряти енкодер
 
-   // --- Відображення тільки якщо дисплей увімкнений ---
-  if (displayManager.getDisplayOn()) {
-    if (displayManager.isEditing()) {
-       displayManager.updateEdit();
-     } else {
-      normalWorkStage();
+  normalWorkStage();
 
-      if (rtcManager.readConfirm()) { // BTN_CONN
-      displayManager.startEdit();
-      displayManager.wakeDisplay();
-      }
-      displayManager.autoPowerOff(); // Переміщено сюди, щоб вимикати екран, коли він увімкнений
-    }
-  } else {
-     // Якщо дисплей вимкнений, перевіряємо кнопки для пробудження
-     if (rtcManager.readConfirm() 
-        || rtcManager.readBack()) {      
-        displayManager.wakeDisplay();
-     }
-  }
+  displayWork();
 
   delay(50);
 }

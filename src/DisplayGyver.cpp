@@ -232,6 +232,7 @@ void DisplayGyver::startEdit() {
 
 /// Оновлює стан редагування часу
 void DisplayGyver::updateEdit() {
+    if (editState == NORMAL) return; // Якщо не в режимі редагування, нічого не робимо
     static bool waitRelease = false;
     static unsigned long pressStart = 0;
     int *editField = nullptr;
@@ -335,11 +336,6 @@ bool DisplayGyver::isEditing() const {
     return editState != NORMAL; 
 }
 
-/// Отримує температуру з RtcManager
-float DisplayGyver::getTemperature() {
-    return rtcManager.getTemperature();
-}
-
 /// Вмикає дисплей
 void DisplayGyver::wakeDisplay() {
   lastUserActionMillis = millis();
@@ -349,10 +345,10 @@ void DisplayGyver::wakeDisplay() {
   }
 }
 
-/// Запускає автоматичне вимкнення дисплея
-void DisplayGyver::autoPowerOff(){
-  // --- Вимкнення дисплея через 1 хвилину бездіяльності ---
-  if (displayOn && (millis() - lastUserActionMillis > 60000)) {
+// Запускає автоматичне вимкнення дисплея
+// --- Вимкнення дисплея через 1 хвилину бездіяльності ---
+void DisplayGyver::autoPowerOff(int setTimeout = 60000) {
+  if (displayOn && (millis() - lastUserActionMillis > setTimeout)) {
     displayOn = false;
     oled.setPower(false); // вимикаємо дисплей
   }

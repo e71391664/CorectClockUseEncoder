@@ -56,7 +56,7 @@ public:
     /// На одному екрані відображає поточний час і температуру (без параметрів)
     void showTimeAndTemperature();
     /// Запускає автоматичне вимкнення дисплея
-    void autoPowerOff();
+    void autoPowerOff(int setTimeout = 60000);
     /// Вмикає дисплей
     void wakeDisplay();
     /// Отримує температуру з RtcManager

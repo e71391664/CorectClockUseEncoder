@@ -205,14 +205,14 @@ void DisplayGyver::showTimeAndTemperature(const TimeBlinkView& view) {
     showTimeAndTemperature(view.hour, view.minute, view.second, view.tempC, view.blinkMaskHour, view.blinkMaskMin, view.blinkMaskSec);
 }
 
-/// Відображає поточний час і температуру (без параметрів)
-void DisplayGyver::showTimeAndTemperature() {
-    DateTime time = rtcManager.now();
-    if (!time.isValid()) return;
+// /// Відображає поточний час і температуру (без параметрів)
+// void DisplayGyver::showTimeAndTemperature() {
+//     DateTime time = rtcManager.now();
+//     if (!time.isValid()) return;
     
-    float tempC = rtcManager.getTemperature();
-    showTimeAndTemperature(time.hour(), time.minute(), time.second(), tempC);
-}
+//     float tempC = rtcManager.getTemperature();
+//     showTimeAndTemperature(time.hour(), time.minute(), time.second(), tempC);
+// }
 
 // --- Методи для корекції часу ---
 /// Починає режим редагування часу

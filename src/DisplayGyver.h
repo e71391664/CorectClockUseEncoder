@@ -54,7 +54,7 @@ public:
     /// На одному екрані відображає час і температуру з маскою блимання (структура)
     void showTimeAndTemperature(const TimeBlinkView& view);
     /// На одному екрані відображає поточний час і температуру (без параметрів)
-    void showTimeAndTemperature();
+    //void showTimeAndTemperature();
     /// Запускає автоматичне вимкнення дисплея
     void autoPowerOff(uint16_t timeout = 60000);
     /// Вмикає дисплей

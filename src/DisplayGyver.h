@@ -47,14 +47,10 @@ public:
     void showTemperature(float tempC);
     /// Відображає поточний час великим шрифтом у верхній частині дисплея
     void showTime(int hour, int minute, int second);
-    /// На одному екрані відображає час і температуру у прямокутнику з розірваною верхньою лінією
-    void showTimeAndTemperature(int hour, int minute, int second, float tempC);
-    /// На одному екрані відображає час і температуру з маскою блимання
-    void showTimeAndTemperature(int hour, int minute, int second, float tempC, uint8_t blinkMaskHour, uint8_t blinkMaskMin, uint8_t blinkMaskSec);
     /// На одному екрані відображає час і температуру з маскою блимання (структура)
     void showTimeAndTemperature(const TimeBlinkView& view);
     /// На одному екрані відображає поточний час і температуру (без параметрів)
-    //void showTimeAndTemperature();
+    void showTimeAndTemperature();
     /// Запускає автоматичне вимкнення дисплея
     void autoPowerOff(uint16_t timeout = 60000);
     /// Вмикає дисплей

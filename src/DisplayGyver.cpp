@@ -95,70 +95,20 @@ void DisplayGyver::showStartProcessing() {
     oled.update();
 }
 
-/// Відображає час і температуру у прямокутнику з розірваною верхньою лінією
-void DisplayGyver::showTimeAndTemperature(int hour, int minute, int second, float tempC) {
-    char timeBuf[9];
-    snprintf(timeBuf, sizeof(timeBuf), "%02d:%02d:%02d", hour, minute, second);
-
-    oled.clear();
-    // Час у верхній частині
-    oled.setScale(2);
-    oled.setCursorXY(16, 0);
-    oled.print(timeBuf);
-
-    // Параметри прямокутника
-    int x0 = 8;   // Лівий край
-    int x1 = 120; // Правий край
-    int y0 = 32;  // Верхній край
-    int y1 = 63;  // Нижній край
-
-    // Слово "Температура" (scale 1) — вписано в розірвану верхню лінію
-    oled.setScale(1);
-    int tempTextX = x0 + 4;
-    int tempTextY = y0 - 4; // Трохи вище лінії
-    oled.setCursorXY(tempTextX, y0 - 4);
-    oled.print("Температура");
-    // Довжина слова (11 символів × 6 = 66 пікселів)
-    int textEnd = tempTextX + 66;
-
-    // Верхня лінія: зліва до слова, справа після слова
-    oled.line(x0, y0, tempTextX - 2, y0); // Ліва частина
-    oled.line(textEnd + 2, y0, x1, y0);   // Права частина
-
-    // Бокові лінії
-    oled.line(x0, y0, x0, y1);
-    oled.line(x1, y0, x1, y1);
-
-    // Значення температури по центру прямокутника
-    oled.setScale(2);
-    int tempValX = x0 + ((x1 - x0) - 48) / 2 - 20; // Зміщено вліво на один символ (12 пікселів)
-    int tempValY = y0 + ((y1 - y0) - 16) / 2 + 2; // 16 — висота символу scale 2
-    oled.setCursorXY(tempValX, tempValY);
-    if (tempC >= 0) oled.print("+");
-    oled.print(tempC);
-    oled.circle(97, 40, 2, OLED_STROKE); // коло зміщено вгору на 4 пікселі та вліво на 6 пікселів
-    oled.setCursorXY(100, tempValY);
-    oled.print("C");
-
-    // Нижня лінія (після тексту, щоб не перекривалась)
-    oled.line(x0, y1, x1, y1);
-
-    oled.update();
-}
-
-/// Відображає час і температуру з маскою блимання
-void DisplayGyver::showTimeAndTemperature(int hour, int minute, int second, float tempC, uint8_t blinkMaskHour, uint8_t blinkMaskMin, uint8_t blinkMaskSec) {
+/// Відображає екран з всіма даними з маскою блимання (структура)
+void DisplayGyver::showTimeAndTemperature(const TimeBlinkView& view) {
     char timeBuf[9];
     char hBuf[3], mBuf[3], sBuf[3];
-    snprintf(hBuf, sizeof(hBuf), "%02d", hour);
-    snprintf(mBuf, sizeof(mBuf), "%02d", minute);
-    snprintf(sBuf, sizeof(sBuf), "%02d", second);
-    if (blinkMaskHour & 1) hBuf[0] = ' ';
-    if (blinkMaskHour & 2) hBuf[1] = ' ';
-    if (blinkMaskMin & 1) mBuf[0] = ' ';
-    if (blinkMaskMin & 2) mBuf[1] = ' ';
-    if (blinkMaskSec & 1) sBuf[0] = ' ';
-    if (blinkMaskSec & 2) sBuf[1] = ' ';
+    snprintf(hBuf, sizeof(hBuf), "%02d", view.hour);
+    snprintf(mBuf, sizeof(mBuf), "%02d", view.minute);
+    snprintf(sBuf, sizeof(sBuf), "%02d", view.second);
+    if (view.blinkMaskHour & 1) hBuf[0] = ' ';
+    if (view.blinkMaskHour & 2) hBuf[1] = ' ';
+    if (view.blinkMaskMin & 1) mBuf[0] = ' ';
+    if (view.blinkMaskMin & 2) mBuf[1] = ' ';
+    if (view.blinkMaskSec & 1) sBuf[0] = ' ';
+    if (view.blinkMaskSec & 2) sBuf[1] = ' ';
+    
     snprintf(timeBuf, sizeof(timeBuf), "%s:%s:%s", hBuf, mBuf, sBuf);
 
     oled.clear();
@@ -174,8 +124,8 @@ void DisplayGyver::showTimeAndTemperature(int hour, int minute, int second, floa
     // Слово "Температура" (scale 1) — вписано в розірвану верхню лінію
     oled.setScale(1);
     int tempTextX = x0 + 4;
-    int tempTextY = y0 - 4; // Трохи вище лінії
-    oled.setCursorXY(tempTextX, y0 - 4);
+    int tempTextY = y0 - 4; // Текст трохи вище лінії
+    oled.setCursorXY(tempTextX, tempTextY);
     oled.print("Температура");
     // Довжина слова (11 символів × 6 = 66 пікселів)
     int textEnd = tempTextX + 66;
@@ -190,8 +140,8 @@ void DisplayGyver::showTimeAndTemperature(int hour, int minute, int second, floa
     int tempValX = x0 + ((x1 - x0) - 48) / 2 - 20; // Зміщено вліво на один символ (12 пікселів)
     int tempValY = y0 + ((y1 - y0) - 16) / 2 + 2; // 16 — висота символу scale 2
     oled.setCursorXY(tempValX, tempValY);
-    if (tempC >= 0) oled.print("+");
-    oled.print(tempC);
+    if (view.tempC >= 0) oled.print("+");
+    oled.print(view.tempC);
     oled.circle(97, 40, 2, OLED_STROKE); // коло зміщено вгору на 4 пікселі та вліво на 6 пікселів
     oled.setCursorXY(100, tempValY);
     oled.print("C");
@@ -200,19 +150,21 @@ void DisplayGyver::showTimeAndTemperature(int hour, int minute, int second, floa
     oled.update();
 }
 
-/// Відображає час і температуру з маскою блимання (структура)
-void DisplayGyver::showTimeAndTemperature(const TimeBlinkView& view) {
-    showTimeAndTemperature(view.hour, view.minute, view.second, view.tempC, view.blinkMaskHour, view.blinkMaskMin, view.blinkMaskSec);
-}
+/// Відображає поточний час і температуру (без параметрів)
+void DisplayGyver::showTimeAndTemperature() {
+    DateTime time = rtcManager.now();
+    if (!time.isValid()) return; 
 
-// /// Відображає поточний час і температуру (без параметрів)
-// void DisplayGyver::showTimeAndTemperature() {
-//     DateTime time = rtcManager.now();
-//     if (!time.isValid()) return;
-    
-//     float tempC = rtcManager.getTemperature();
-//     showTimeAndTemperature(time.hour(), time.minute(), time.second(), tempC);
-// }
+    TimeBlinkView view;
+    view.hour = time.hour();
+    view.minute = time.minute();
+    view.second = time.second();
+    view.tempC = rtcManager.getTemperature();
+    view.blinkMaskHour = 0; // Немає блимання
+    view.blinkMaskMin = 0; // Немає блимання
+    view.blinkMaskSec = 0; // Немає блимання
+    showTimeAndTemperature(view);
+}
 
 // --- Методи для корекції часу ---
 /// Починає режим редагування часу

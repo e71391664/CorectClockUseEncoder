@@ -17,6 +17,28 @@ ReleManager releManager;
 DisplayGyver displayManager(rtcManager);
 EncoderManager encoderManager (displayManager, releManager, rtcManager);  
 
+/// Обробка логіки коли дисплей увімкнений
+void handleDisplayOn() {
+  if (displayManager.isEditing()) {
+    // Режим редагування часу
+    displayManager.updateEdit();
+  } else {
+    // Звичайний режим - перевіряємо вхід в редагування
+    if (rtcManager.readConfirm()) {
+      displayManager.startEdit();
+      displayManager.wakeDisplay();
+    }
+  }
+}
+
+/// Обробка логіки коли дисплей вимкнений
+void handleDisplayOff() {
+  // Перевіряємо кнопки для пробудження
+  if (rtcManager.readConfirm() || rtcManager.readBack()) {
+    displayManager.wakeDisplay();
+  }
+}
+
 //Відображення на дисплеї, реакція на уставку через енкодер та обробка реле
 void normalWorkStage(){
   if (encoderManager.inEditMode()) {
@@ -44,30 +66,23 @@ void setup() {
 }
 
 void loop() {
+  // --- Оновлення всіх менеджерів ---
   encoderManager.update();
   releManager.update();
-  encoderManager.encoderCheck(); // Переміщено сюди, щоб завжди перевіряти енкодер
-  displayManager.autoPowerOff(); // Переміщено сюди, щоб вимикати екран, коли він увімкнений
+  encoderManager.encoderCheck();
+  
+  // --- Керування живленням дисплея ---
+  displayManager.autoPowerOff();
+  
+  // --- Основна логіка роботи ---
+  if (displayManager.isDisplayOn()) {
+    handleDisplayOn();
+  } else {
+    handleDisplayOff();
+  }
+  
+  // --- Відображення стану ---
   normalWorkStage();
   
-  // --- Відображення тільки якщо дисплей увімкнений ---
-  if (displayManager.getDisplayOn()) {
-    if (displayManager.isEditing()){
-       displayManager.updateEdit();
-    }    
-      
-    if (rtcManager.readConfirm()) { // BTN_CONN
-      displayManager.startEdit();
-      displayManager.wakeDisplay();
-    }
-
-  } else {
-     // Якщо дисплей вимкнений, перевіряємо кнопки для пробудження
-     if (rtcManager.readConfirm() 
-        || rtcManager.readBack()) {      
-        displayManager.wakeDisplay();
-     }
-  }
-
   delay(50);
 }

@@ -90,6 +90,7 @@ void DisplayGyver::showStartProcessing() {
     oled.setScale(2);
     oled.setCursorXY(8, 0);
     oled.print(buf);
+    /// Відображення крапок / анимація
     for (uint8_t i = 0; i < dots; i++) oled.print(".");
     oled.drawBitmap(40, 32, bitmap_32x32, 32, 32, BITMAP_NORMAL, BUF_ADD);
     oled.update();
@@ -150,7 +151,7 @@ void DisplayGyver::showTimeAndTemperature(const TimeBlinkView& view) {
     oled.update();
 }
 
-/// Відображає поточний час і температуру (без параметрів)
+/// Відображає поточний час і температуру з основнокго потоку loop()
 void DisplayGyver::showTimeAndTemperature() {
     DateTime time = rtcManager.now();
     if (!time.isValid()) return; 
@@ -163,6 +164,7 @@ void DisplayGyver::showTimeAndTemperature() {
     view.blinkMaskHour = 0; // Немає блимання
     view.blinkMaskMin = 0; // Немає блимання
     view.blinkMaskSec = 0; // Немає блимання
+    
     showTimeAndTemperature(view);
 }
 
@@ -208,6 +210,7 @@ void DisplayGyver::updateEdit() {
         default:
             break;
     }
+
     if (editField) {
         if (millis() - lastBlink > 500) {
             blink = !blink;
@@ -234,11 +237,13 @@ void DisplayGyver::updateEdit() {
         } else if (waitRelease) {
             waitRelease = false;
         }
+
         if (rtcManager.readBack()) { // BTN_BACK
             editState = NORMAL;
             lastEditActionMillis = millis();
         }
-        if (digitalRead(11) == LOW) { // BTN_CONF
+
+        if (rtcManager.readConfirm()) { // BTN_CONF
             if (pressStart == 0) pressStart = millis();
             if (millis() - pressStart > 1000) {
                 editState = nextState;

@@ -47,10 +47,19 @@ void RtcManager::applyOffset(int offsetMinutes) {
 
 // Друк поточного часу в Serial-порт один раз в секунду.
 void RtcManager::printTimeOncePerSecond() {
-    if (millis() - lastSecondMillis >= 1000) {
-        lastSecondMillis = millis();
-        DateTime currentTime = rtc.now();
-    }
+    if (millis() - lastSecondMillis < 1000) return; // Якщо пройшло менше секунди, нічого не робимо
+    lastSecondMillis = millis();
+    DateTime currentTime = rtc.now();
+    Serial.print(F("RTC Time: "));
+    Serial.print(currentTime.year(), DEC); Serial.print(F("/"));
+    Serial.print(currentTime.month(), DEC); Serial.print(F("/"));
+    Serial.print(currentTime.day(), DEC); Serial.print(F(" "));
+    Serial.print(currentTime.hour(), DEC); Serial.print(F(":"));
+    if (currentTime.minute() < 10) Serial.print(F("0"));
+    Serial.print(currentTime.minute(), DEC); Serial.print(F(":"));
+    if (currentTime.second() < 10) Serial.print(F("0"));
+    Serial.print(currentTime.second(), DEC);
+    Serial.println();    
 }
 
 // @brief Зчитує стан кнопки BTN_BACK

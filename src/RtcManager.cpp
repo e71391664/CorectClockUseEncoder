@@ -8,8 +8,8 @@ RtcManager::RtcManager() : lastSecondMillis(0) {}
 
 // Ініціалізує RTC.
 bool RtcManager::init() {
-    pinMode(BTN_BACK, INPUT_PULLUP); // D10
-    pinMode(BTN_CONF, INPUT_PULLUP); // D11
+    pinMode(BTN_BACK, INPUT_PULLUP); 
+    pinMode(BTN_CONF, INPUT_PULLUP); 
     
     // Починаємо I2C комунікацію (якщо ще не почато в setup()).
     // Це потрібно, якщо RtcManager::init() викликається до Wire.begin().

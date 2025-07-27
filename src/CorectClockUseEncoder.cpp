@@ -47,20 +47,20 @@ void loop() {
   encoderManager.update();
   releManager.update();
   encoderManager.encoderCheck(); // Переміщено сюди, щоб завжди перевіряти енкодер
-
-   // --- Відображення тільки якщо дисплей увімкнений ---
+  displayManager.autoPowerOff(); // Переміщено сюди, щоб вимикати екран, коли він увімкнений
+  normalWorkStage();
+  
+  // --- Відображення тільки якщо дисплей увімкнений ---
   if (displayManager.getDisplayOn()) {
-    if (displayManager.isEditing()) {
+    if (displayManager.isEditing()){
        displayManager.updateEdit();
-     } else {
-      normalWorkStage();
-
-      if (rtcManager.readConfirm()) { // BTN_CONN
+    }    
+      
+    if (rtcManager.readConfirm()) { // BTN_CONN
       displayManager.startEdit();
       displayManager.wakeDisplay();
-      }
-   }
-   displayManager.autoPowerOff(); // Переміщено сюди, щоб вимикати екран, коли він увімкнений
+    }
+
   } else {
      // Якщо дисплей вимкнений, перевіряємо кнопки для пробудження
      if (rtcManager.readConfirm() 

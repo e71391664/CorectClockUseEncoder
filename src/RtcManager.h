@@ -31,8 +31,6 @@ public:
     void setTime(const DateTime& time);
     /// Друкує поточний час у Serial-порт раз на секунду
     void printTimeOncePerSecond();
-    /// Ініціалізує кнопки
-    void initButtons();
     /// Зчитує стан кнопки BTN_BACK
     bool readBack();
     /// Зчитує стан кнопки BTN_CONF

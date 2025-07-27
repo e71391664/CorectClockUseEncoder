@@ -184,13 +184,34 @@ void DisplayGyver::startEdit() {
     firstEditEntry = true;
 }
 
-/// Оновлює стан редагування часу
+/// Оновлює стан редагування часу (рефакторінгу версія)
 void DisplayGyver::updateEdit() {
-    static bool waitRelease = false;
-    static unsigned long pressStart = 0;
-    int *editField = nullptr;
-    int maxValue = 0;
-    EditState nextState = NORMAL;
+    // Перевіряємо, чи є активне поле для редагування
+    int* editField;
+    int maxValue;
+    EditState nextState;
+    getEditFieldInfo(editField, maxValue, nextState);
+    
+    if (!editField) return;
+    
+    // Оновлюємо стан блимання
+    updateBlinkState();
+    
+    // Оновлюємо відображення
+    updateTimeBlinkView();
+    
+    // Перевіряємо таймаут редагування
+    handleEditTimeout();
+    if (editState == NORMAL) return; // Якщо таймаут спрацював
+    
+    // Обробляємо натискання кнопок
+    handleIncrementButton();
+    handleBackButton();
+    handleConfirmButton();
+}
+
+/// Отримує інформацію про поточне поле редагування
+void DisplayGyver::getEditFieldInfo(int*& editField, int& maxValue, EditState& nextState) {
     switch (editState) {
         case EDIT_HOUR:
             editField = &editHour;
@@ -208,56 +229,83 @@ void DisplayGyver::updateEdit() {
             nextState = NORMAL;
             break;
         default:
+            editField = nullptr;
+            maxValue = 0;
+            nextState = NORMAL;
             break;
     }
+}
 
-    if (editField) {
-        if (millis() - lastBlink > 500) {
-            blink = !blink;
-            lastBlink = millis();
-        }
-        
-        updateTimeBlinkView();
+/// Оновлює стан блимання
+void DisplayGyver::updateBlinkState() {
+    if (millis() - lastBlink > 500) {
+        blink = !blink;
+        lastBlink = millis();
+    }
+}
 
-        if (millis() - lastEditActionMillis > 3000) {
-            confirmEdit(rtcManager.now());
-            return;
-        }
+/// Обробляє таймаут редагування
+void DisplayGyver::handleEditTimeout() {
+    if (millis() - lastEditActionMillis > 3000) {
+        confirmEdit(rtcManager.now());
+    }
+}
 
-        if (rtcManager.readConfirm()) { // BTN_CONN
-            if (!waitRelease) {
-                if (firstEditEntry) {
-                    firstEditEntry = false;
-                } else {
-                    *editField = (*editField + 1) % maxValue;
-                }
-                waitRelease = true;
-                lastEditActionMillis = millis();
+/// Обробляє кнопку збільшення значення
+void DisplayGyver::handleIncrementButton() {
+    int* editField;
+    int maxValue;
+    EditState nextState;
+    getEditFieldInfo(editField, maxValue, nextState);
+    
+    if (!editField) return;
+    
+    if (rtcManager.readConfirm()) { // BTN_CONN
+        if (!waitRelease) {
+            if (firstEditEntry) {
+                firstEditEntry = false;
+            } else {
+                *editField = (*editField + 1) % maxValue;
             }
-        } else if (waitRelease) {
-            waitRelease = false;
-        }
-
-        if (rtcManager.readBack()) { // BTN_BACK
-            editState = NORMAL;
+            waitRelease = true;
             lastEditActionMillis = millis();
         }
+    } else if (waitRelease) {
+        waitRelease = false;
+    }
+}
 
-        if (rtcManager.readConfirm()) { // BTN_CONF
-            if (pressStart == 0) pressStart = millis();
-            if (millis() - pressStart > 1000) {
-                editState = nextState;
-                blink = false;
-                lastBlink = millis();
-                pressStart = 0;
-                waitRelease = false;
-                lastEditActionMillis = millis();
-                firstEditEntry = true;
-                if (editState == NORMAL) confirmEdit(rtcManager.now());
-            }
-        } else {
+/// Обробляє кнопку повернення
+void DisplayGyver::handleBackButton() {
+    if (rtcManager.readBack()) { // BTN_BACK
+        editState = NORMAL;
+        lastEditActionMillis = millis();
+    }
+}
+
+/// Обробляє кнопку підтвердження
+void DisplayGyver::handleConfirmButton() {
+    int* editField;
+    int maxValue;
+    EditState nextState;
+    getEditFieldInfo(editField, maxValue, nextState);
+    
+    if (!editField) return;
+    
+    if (rtcManager.readConfirm()) { // BTN_CONF
+        if (pressStart == 0) pressStart = millis();
+        if (millis() - pressStart > 1000) {
+            editState = nextState;
+            blink = false;
+            lastBlink = millis();
             pressStart = 0;
+            waitRelease = false;
+            lastEditActionMillis = millis();
+            firstEditEntry = true;
+            if (editState == NORMAL) confirmEdit(rtcManager.now());
         }
+    } else {
+        pressStart = 0;
     }
 }
 

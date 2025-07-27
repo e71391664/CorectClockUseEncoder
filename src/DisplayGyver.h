@@ -34,6 +34,19 @@ private:
     int editHour = 0, editMinute = 0, editSecond = 0; ///< Значення для редагування часу
     unsigned long lastEditActionMillis = 0; ///< Час останньої дії при редагуванні
     bool firstEditEntry = true; ///< Перший вхід у режим редагування
+    
+    // Статичні змінні з updateEdit() винесені в поля класу
+    bool waitRelease = false; ///< Очікування відпускання кнопки
+    unsigned long pressStart = 0; ///< Час початку натискання кнопки
+    
+    // Приватні допоміжні методи для рефакторінгу updateEdit()
+    void updateBlinkState(); ///< Оновлює стан блимання
+    void handleEditTimeout(); ///< Обробляє таймаут редагування
+    void handleIncrementButton(); ///< Обробляє кнопку збільшення значення
+    void handleBackButton(); ///< Обробляє кнопку повернення
+    void handleConfirmButton(); ///< Обробляє кнопку підтвердження
+    void getEditFieldInfo(int*& editField, int& maxValue, EditState& nextState); ///< Отримує інформацію про поточне поле редагування
+
 public:
     /// Конструктор з посиланням на RtcManager
     DisplayGyver(RtcManager& rtc);

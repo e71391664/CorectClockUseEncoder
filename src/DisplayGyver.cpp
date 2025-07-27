@@ -350,10 +350,9 @@ void DisplayGyver::wakeDisplay() {
   }
 }
 
-/// Запускає автоматичне вимкнення дисплея
-void DisplayGyver::autoPowerOff(){
-  // --- Вимкнення дисплея через 1 хвилину бездіяльності ---
-  if (displayOn && (millis() - lastUserActionMillis > 60000)) {
+/// Автоматичне вимкнення дисплея
+void DisplayGyver::autoPowerOff(uint16_t timeout) {
+  if (displayOn && (millis() - lastUserActionMillis > timeout)) {
     displayOn = false;
     oled.setPower(false); // вимикаємо дисплей
   }

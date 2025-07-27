@@ -250,7 +250,6 @@ void DisplayGyver::handleEditTimeout() {
     }
 }
 
-
 /// Обробляє кнопку повернення
 void DisplayGyver::handleBackButton() {
     if (rtcManager.readBack()) { // BTN_BACK

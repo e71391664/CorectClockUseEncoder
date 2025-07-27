@@ -73,7 +73,7 @@ public:
     /// Повертає посилання на час останньої дії користувача
     unsigned long& getLastUserActionMillis();
     /// Повертає посилання на стан дисплея
-    bool& getDisplayOn();
+    bool& isDisplayOn();
     // --- Методи для корекції часу ---
     /// Починає режим редагування часу
     void startEdit();

@@ -205,9 +205,8 @@ void DisplayGyver::updateEdit() {
     if (editState == NORMAL) return; // Якщо таймаут спрацював
     
     // Обробляємо натискання кнопок
-    handleIncrementButton();
     handleBackButton();
-    handleConfirmButton();
+    handleConfirmButton(); // Тепер обробляє і збільшення, і перехід
 }
 
 /// Отримує інформацію про поточне поле редагування
@@ -251,29 +250,6 @@ void DisplayGyver::handleEditTimeout() {
     }
 }
 
-/// Обробляє кнопку збільшення значення
-void DisplayGyver::handleIncrementButton() {
-    int* editField;
-    int maxValue;
-    EditState nextState;
-    getEditFieldInfo(editField, maxValue, nextState);
-    
-    if (!editField) return;
-    
-    if (rtcManager.readConfirm()) { // BTN_CONN
-        if (!waitRelease) {
-            if (firstEditEntry) {
-                firstEditEntry = false;
-            } else {
-                *editField = (*editField + 1) % maxValue;
-            }
-            waitRelease = true;
-            lastEditActionMillis = millis();
-        }
-    } else if (waitRelease) {
-        waitRelease = false;
-    }
-}
 
 /// Обробляє кнопку повернення
 void DisplayGyver::handleBackButton() {
@@ -283,7 +259,7 @@ void DisplayGyver::handleBackButton() {
     }
 }
 
-/// Обробляє кнопку підтвердження
+/// Обробляє кнопку підтвердження (об'єднана логіка)
 void DisplayGyver::handleConfirmButton() {
     int* editField;
     int maxValue;
@@ -293,19 +269,38 @@ void DisplayGyver::handleConfirmButton() {
     if (!editField) return;
     
     if (rtcManager.readConfirm()) { // BTN_CONF
-        if (pressStart == 0) pressStart = millis();
-        if (millis() - pressStart > 1000) {
+        if (pressStart == 0) {
+            pressStart = millis(); // Початок натискання
+        }
+        
+        unsigned long pressDuration = millis() - pressStart;
+        
+        // Коротке натискання (<1000мс) - збільшення значення
+        if (pressDuration < 1000 && !waitRelease) {
+            if (firstEditEntry) {
+                firstEditEntry = false;
+            } else {
+                *editField = (*editField + 1) % maxValue;
+            }
+            waitRelease = true;
+            lastEditActionMillis = millis();
+        }
+        
+        // Тривале натискання (≥1000мс) - перехід до наступного поля
+        if (pressDuration >= 1000 && !waitRelease) {
             editState = nextState;
             blink = false;
             lastBlink = millis();
             pressStart = 0;
-            waitRelease = false;
+            waitRelease = true;
             lastEditActionMillis = millis();
             firstEditEntry = true;
             if (editState == NORMAL) confirmEdit(rtcManager.now());
         }
     } else {
+        // Кнопка відпущена
         pressStart = 0;
+        waitRelease = false;
     }
 }
 
@@ -367,4 +362,4 @@ void DisplayGyver::autoPowerOff(uint16_t timeout) {
 unsigned long& DisplayGyver::getLastUserActionMillis() { return lastUserActionMillis; }
 
 /// Повертає посилання на стан дисплея
-bool& DisplayGyver::getDisplayOn() { return displayOn; }
+bool& DisplayGyver::isDisplayOn() { return displayOn; }

@@ -34,17 +34,6 @@ bool RtcManager::init() {
     return true;
 }
 
-// Отримує поточний час від RTC.
-DateTime RtcManager::now() { return rtc.now(); }
-
-// Отримує температуру від RTC.
-float RtcManager::getTemperature() { return rtc.getTemperature(); }
-
-// Встановлює час в RTC
-void RtcManager::setTime(const DateTime& time) {
-    rtc.adjust(time);
-}
-
 // Застосовує задане зміщення в хвилинах до поточного часу RTC.
 void RtcManager::applyOffset(int offsetMinutes) {
     DateTime currentTime = rtc.now();
@@ -64,12 +53,28 @@ void RtcManager::printTimeOncePerSecond() {
     }
 }
 
+// @brief Зчитує стан кнопки BTN_BACK
+// @return true якщо кнопка натиснута, false якщо відпущена
 bool RtcManager::readBack() {
     backState = (digitalRead(BTN_BACK) == LOW); // true якщо натиснуто
     return backState;
 }
 
+// @brief Зчитує стан кнопки BTN_CONF
+// @return true якщо кнопка натиснута, false якщо відпущена
 bool RtcManager::readConfirm() {
     confirmState = (digitalRead(BTN_CONF) == LOW);
     return confirmState;
+}
+
+// @brief Поточний час від RTC.
+// @return Поточний час як об'єкт DateTime
+DateTime RtcManager::now() { return rtc.now(); }
+
+// Отримує температуру від RTC.
+float RtcManager::getTemperature() { return rtc.getTemperature(); }
+
+// Встановлює час в RTC
+void RtcManager::setTime(const DateTime& time) {
+    rtc.adjust(time);
 }

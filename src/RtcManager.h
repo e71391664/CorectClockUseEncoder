@@ -12,8 +12,8 @@ private:
     RTC_DS3231 rtc; ///< Об'єкт RTC, ініціалізується з глобальним об'єктом Wire (I2C)
     unsigned long lastSecondMillis; ///< Для printTimeOncePerSecond
     static const uint8_t DS_ADDRESS = 0x68; ///< I2C адреса для більшості RTC (DS1307, DS3231)
-    static const uint8_t BTN_CONF = 6; ///< D6 CONFIRM on display plate
-    static const uint8_t BTN_BACK = 7; ///< D7 BACK on display plate
+    static const uint8_t BTN_CONF = 5; ///< D6 CONFIRM on display plate
+    static const uint8_t BTN_BACK = 6; ///< D7 BACK on display plate
 
     bool backState = false; ///< Стан кнопки BTN_BACK
     bool confirmState = false; ///< Стан кнопки BTN_CONF

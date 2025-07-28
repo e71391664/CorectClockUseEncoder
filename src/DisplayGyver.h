@@ -33,7 +33,6 @@ private:
     bool blink = false; ///< Стан блимання
     int editHour = 0, editMinute = 0, editSecond = 0; ///< Значення для редагування часу
     unsigned long lastEditActionMillis = 0; ///< Час останньої дії при редагуванні
-    bool firstEditEntry = true; ///< Перший вхід у режим редагування
     
     // Статичні змінні з updateEdit() винесені в поля класу
     bool waitRelease = false; ///< Очікування відпускання кнопки
@@ -46,6 +45,7 @@ private:
     void handleBackButton(); ///< Обробляє кнопку повернення
     void handleConfirmButton(); ///< Обробляє кнопку підтвердження
     void getEditFieldInfo(int*& editField, int& maxValue, EditState& nextState); ///< Отримує інформацію про поточне поле редагування
+    void formatTimeComponent(char* buf, size_t bufSize, int value, uint8_t mask); ///< Форматує компонент часу з урахуванням блимання
 
 public:
     /// Конструктор з посиланням на RtcManager

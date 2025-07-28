@@ -96,19 +96,24 @@ void DisplayGyver::showStartProcessing() {
     oled.update();
 }
 
+/// Форматує один компонент часу (години, хвилини або секунди) для відображення
+void DisplayGyver::formatTimeComponent(char* buf, size_t bufSize, int value, uint8_t mask) {
+    if (mask & 2) { // Якщо блимає друга цифра
+        char temp[2];
+        sprintf(temp, "%d", value / 10);
+        snprintf(buf, bufSize, "%s ", temp);
+    } else {
+        snprintf(buf, bufSize, "%02d", value);
+    }
+}
+
 /// Відображає екран з всіма даними з маскою блимання (структура)
 void DisplayGyver::showTimeAndTemperature(const TimeBlinkView& view) {
     char timeBuf[9];
     char hBuf[3], mBuf[3], sBuf[3];
-    snprintf(hBuf, sizeof(hBuf), "%02d", view.hour);
-    snprintf(mBuf, sizeof(mBuf), "%02d", view.minute);
-    snprintf(sBuf, sizeof(sBuf), "%02d", view.second);
-    if (view.blinkMaskHour & 1) hBuf[0] = ' ';
-    if (view.blinkMaskHour & 2) hBuf[1] = ' ';
-    if (view.blinkMaskMin & 1) mBuf[0] = ' ';
-    if (view.blinkMaskMin & 2) mBuf[1] = ' ';
-    if (view.blinkMaskSec & 1) sBuf[0] = ' ';
-    if (view.blinkMaskSec & 2) sBuf[1] = ' ';
+    formatTimeComponent(hBuf, sizeof(hBuf), view.hour, view.blinkMaskHour);
+    formatTimeComponent(mBuf, sizeof(mBuf), view.minute, view.blinkMaskMin);
+    formatTimeComponent(sBuf, sizeof(sBuf), view.second, view.blinkMaskSec);
     
     snprintf(timeBuf, sizeof(timeBuf), "%s:%s:%s", hBuf, mBuf, sBuf);
 
@@ -181,7 +186,6 @@ void DisplayGyver::startEdit() {
     lastBlink = millis();
     blink = false;
     lastEditActionMillis = millis();
-    firstEditEntry = true;
 }
 
 /// Оновлює стан редагування часу (рефакторінгу версія)
@@ -193,20 +197,20 @@ void DisplayGyver::updateEdit() {
     getEditFieldInfo(editField, maxValue, nextState);
     
     if (!editField) return;
-    
-    // Оновлюємо стан блимання
-    updateBlinkState();
-    
-    // Оновлюємо відображення
-    updateTimeBlinkView();
-    
+
     // Перевіряємо таймаут редагування
     handleEditTimeout();
     if (editState == NORMAL) return; // Якщо таймаут спрацював
-    
-    // Обробляємо натискання кнопок
+
+    // Спочатку обробляємо натискання кнопок
     handleBackButton();
-    handleConfirmButton(); // Тепер обробляє і збільшення, і перехід
+    handleConfirmButton();
+
+    // Потім оновлюємо стан блимання
+    updateBlinkState();
+    
+    // І в кінці оновлюємо відображення з актуальними даними
+    updateTimeBlinkView();
 }
 
 /// Отримує інформацію про поточне поле редагування
@@ -237,7 +241,7 @@ void DisplayGyver::getEditFieldInfo(int*& editField, int& maxValue, EditState& n
 
 /// Оновлює стан блимання
 void DisplayGyver::updateBlinkState() {
-    if (millis() - lastBlink > 500) {
+    if (millis() - lastBlink > 300) {
         blink = !blink;
         lastBlink = millis();
     }
@@ -276,11 +280,7 @@ void DisplayGyver::handleConfirmButton() {
         
         // Коротке натискання (<1000мс) - збільшення значення
         if (pressDuration < 1000 && !waitRelease) {
-            if (firstEditEntry) {
-                firstEditEntry = false;
-            } else {
-                *editField = (*editField + 1) % maxValue;
-            }
+            *editField = (*editField + 1) % maxValue;
             waitRelease = true;
             lastEditActionMillis = millis();
         }
@@ -293,7 +293,6 @@ void DisplayGyver::handleConfirmButton() {
             pressStart = 0;
             waitRelease = true;
             lastEditActionMillis = millis();
-            firstEditEntry = true;
             if (editState == NORMAL) confirmEdit(rtcManager.now());
         }
     } else {
